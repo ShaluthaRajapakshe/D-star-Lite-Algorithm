@@ -3,6 +3,7 @@ from graph import graph, CreateGraph
 import heapq
 import pygame
 import math
+import sys
 
 
 # rows = 3
@@ -85,7 +86,7 @@ def ComputeShortestPath(graph, queue, start_node_id, k_m): #input ekak widihata 
     
     while ((graph.graph[start_node_id].rhs != graph.graph[start_node_id].g) or (GetTopKey(queue) < CalculateKey(graph, start_node_id, start_node_id, k_m))):#patan gannkota start node eke ke value eka tiyenne <inf, inf>.. a ka greater than goal eke <key pair > ekata wada.. so loop eka athulata ynwa. SO meka ewara wenna nma aniwa strt node eke g=rhs wennath one, start node eke key pair eka prioriry list eke top value ekata adu wennath one..so simply shortest path kiyana eka
         k_old = GetTopKey(queue) #key value currently on top of the prority queue
-        print(k_old)
+        # print(k_old)
         priority_queue_top_value = heapq.heappop(queue)
         u = priority_queue_top_value[2]  #id of the node in the top of priority queue
         k_new = CalculateKey(graph, u, start_node_id, k_m )
@@ -134,7 +135,7 @@ def initialize(rows, columns,start, goal):
     # count = 0
     # while (GetTopKey(queue) < CalculateKey(GRAPH, goal, start, k_m)):
     #     count += 1
-    #     print ("heu")
+    #     print ("hey")
     #     if (count > 10):
     #         break
     
@@ -156,8 +157,8 @@ def NextNodeInShortestPath(graph, start_current_node_id):
     if s_next:
         return s_next
     else:
-        # raise ValueError('could not find child for transition!')
         print ("cannot find a way")
+        sys.exit()
 
 
 def MoveToNextNode(graph, start_current_node_id):
