@@ -194,8 +194,8 @@ def CreateGraph(grid,rows, columns):
 
                     if (i > 0):
                         if (grid[i-1][j+1] == 1):
-                            node.predecessors[str(i)+str(j+1)] = float('inf')
-                            node.successors[str(i)+str(j+1)] = float('inf')
+                            node.predecessors[str(i-1)+str(j+1)] = float('inf')
+                            node.successors[str(i-1)+str(j+1)] = float('inf')
                         else :  
                             node.predecessors[str(i-1)+str(j+1)] = 1.4
                             node.successors[str(i-1)+str(j+1)] = 1.4
