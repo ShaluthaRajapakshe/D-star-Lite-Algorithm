@@ -2,6 +2,7 @@ from node import Node
 from graph import graph, CreateGraph
 import heapq
 import pygame
+import math
 
 
 # rows = 3
@@ -14,9 +15,6 @@ import pygame
 # B.getGoal()
 
 
-
-
-
 #order to run the algorithm
 #Give rows and colmns and make the graph first
 #Set a goal and a starting point
@@ -27,15 +25,15 @@ import pygame
 def heuristic_from_s(node_id, start_current_node_id):  #considering diagonal distance
     x_distance = abs(int(node_id[0]) - int(start_current_node_id[0]))
     y_distance = abs(int(node_id[1]) - int(start_current_node_id[1]))
-    return max(x_distance, y_distance)
+    eucledian_distance = math.sqrt(x_distance**2 + y_distance**2)
+    return eucledian_distance
 
 def CalculateKey(graph, node_id, start_current_node_id, k_m):
-    list = [min(graph.graph[node_id].g,graph.graph[node_id].rhs) + heuristic_from_s(node_id,start_current_node_id) + k_m, min(graph.graph[node_id].g, graph.graph[node_id].rhs)]
+    list = [round(min(graph.graph[node_id].g,graph.graph[node_id].rhs) + heuristic_from_s(node_id,start_current_node_id),1)+ k_m, min(graph.graph[node_id].g, graph.graph[node_id].rhs)]
     return (list)
 
 def GetTopKey(queue):
     queue.sort()
-    # print(queue)
     if len(queue) > 0:
         list = []
         list.append(queue[0][0])
@@ -60,7 +58,7 @@ def UpdateVertex(graph, queue, node_id, start_current_node_id, k_m ): #RHS valus
             min_rhs = min(min_rhs,graph.graph[i].g + graph.graph[node_id].successors[i]) #last part is the edge cost
             # print(min_rhs)
             
-        graph.graph[node_id].rhs = min_rhs
+        graph.graph[node_id].rhs = round(min_rhs,1)
         
 
     #rhs value update karala balanna one inconsistent nathi a wa tiyenwada kiyala..inconsistent nattn queuen eken ain karanna one 
@@ -87,6 +85,7 @@ def ComputeShortestPath(graph, queue, start_node_id, k_m): #input ekak widihata 
     
     while ((graph.graph[start_node_id].rhs != graph.graph[start_node_id].g) or (GetTopKey(queue) < CalculateKey(graph, start_node_id, start_node_id, k_m))):#patan gannkota start node eke ke value eka tiyenne <inf, inf>.. a ka greater than goal eke <key pair > ekata wada.. so loop eka athulata ynwa. SO meka ewara wenna nma aniwa strt node eke g=rhs wennath one, start node eke key pair eka prioriry list eke top value ekata adu wennath one..so simply shortest path kiyana eka
         k_old = GetTopKey(queue) #key value currently on top of the prority queue
+        print(k_old)
         priority_queue_top_value = heapq.heappop(queue)
         u = priority_queue_top_value[2]  #id of the node in the top of priority queue
         k_new = CalculateKey(graph, u, start_node_id, k_m )
@@ -102,7 +101,7 @@ def ComputeShortestPath(graph, queue, start_node_id, k_m): #input ekak widihata 
                 UpdateVertex(graph, queue, i, start_node_id, k_m)
                 
 
-        if (graph.graph[u].g < graph.graph[u].rhs):#Underconsistent
+        elif (graph.graph[u].g < graph.graph[u].rhs):#Underconsistent
             graph.graph[u].g = float('inf')
             for i in graph.graph[u].predecessors:
                 UpdateVertex(graph, queue, u, start_node_id, k_m)

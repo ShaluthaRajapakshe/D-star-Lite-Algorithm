@@ -14,9 +14,10 @@ class graph:
     def __str__(self):
         msg = 'Graph:'
         for i in self.graph:
+
             msg += '\n  node: ' + i + ' g: ' + \
                 str(self.graph[i].g) + ' rhs: ' + str(self.graph[i].rhs) + \
-                ' neighbors: ' + str(self.graph[i].successors)
+        ' neighbors: ' + str(self.graph[i].successors)
         return msg
 
     def setGoal(self, node_id):
@@ -48,33 +49,88 @@ def CreateGraph(grid,rows, columns):
     for i in range(rows):
         for j in range(columns):
             node = Node(str(i)+str(j))
-            if (grid[i][j] == 1): #setting edge costs to infinity
-
+            if (grid[i][j] == 1): #setting edge costs to infinity if the cell is an obstacle, but we can remove this node directly from the graph, to do that remove Node(str(i)+str(j))
+                # continue
                 if (i > 0):
                     node.predecessors[str(i-1)+str(j)] = float('inf')
                     node.successors[str(i-1)+str(j)] = float('inf')
+
+                    if (j+1< columns):
+                        node.predecessors[str(i-1)+str(j+1)] = float('inf')
+                        node.successors[str(i-1)+str(j+1)] = float('inf')
+                    
+                    if (j > 0):
+                        node.predecessors[str(i-1)+str(j-1)] = float('inf')
+                        node.successors[str(i-1)+str(j-1)] = float('inf')
+                    
 
                 if (j > 0):
                     node.predecessors[str(i)+str(j-1)] = float('inf')
                     node.successors[str(i)+str(j-1)] = float('inf')
 
+                    if (i > 0):
+                        node.predecessors[str(i-1)+str(j-1)] = float('inf')
+                        node.successors[str(i-1)+str(j-1)] = float('inf')
+
+                    if (i+1< rows):
+                        node.predecessors[str(i+1)+str(j-1)] = float('inf')
+                        node.successors[str(i+1)+str(j-1)] = float('inf')
+               
+
                 if (i+1< rows):
                     node.predecessors[str(i+1)+str(j)] = float('inf')
                     node.successors[str(i+1)+str(j)] = float('inf')
+
+                    if (j > 0):
+                        node.predecessors[str(i+1)+str(j-1)] = float('inf')
+                        node.successors[str(i+1)+str(j-1)] = float('inf')
+              
+                    if (j+1< columns):
+             
+                        node.predecessors[str(i+1)+str(j+1)] = float('inf')
+                        node.successors[str(i+1)+str(j+1)] = float('inf')
 
                 if (j+1< columns):
                     node.predecessors[str(i)+str(j+1)] = float('inf')
                     node.successors[str(i)+str(j+1)] = float('inf')
 
+                    if (i > 0): 
+                        node.predecessors[str(i)+str(j+1)] = float('inf')
+                        node.successors[str(i)+str(j+1)] = float('inf')
+                      
+                    if (i+1< rows):  
+                        node.predecessors[str(i+1)+str(j+1)] = float('inf')
+                        node.successors[str(i+1)+str(j+1)] = float('inf')
+               
+                    
+
             else:
                 if (i > 0):
                    
-                    if (grid[i-1][j] == 1):
+                    if (grid[i-1][j] == 1):  #setting edge costs to infinity if the neighbour cell is an obstacle
                         node.predecessors[str(i-1)+str(j)] = float('inf')
                         node.successors[str(i-1)+str(j)] = float('inf')
                     else :  
                         node.predecessors[str(i-1)+str(j)] = 1
                         node.successors[str(i-1)+str(j)] = 1
+
+                    if (j+1< columns):
+                        if (grid[i-1][j+1] == 1):
+                            node.predecessors[str(i-1)+str(j+1)] = float('inf')
+                            node.successors[str(i-1)+str(j+1)] = float('inf')
+                        else:
+                            node.predecessors[str(i-1)+str(j+1)] = 1.4
+                            node.successors[str(i-1)+str(j+1)] = 1.4
+                    
+                    if (j > 0):
+                        if (grid[i-1][j-1] == 1):
+                            node.predecessors[str(i-1)+str(j-1)] = float('inf')
+                            node.successors[str(i-1)+str(j-1)] = float('inf')
+                        else:
+                            node.predecessors[str(i-1)+str(j-1)] = 1.4
+                            node.successors[str(i-1)+str(j-1)] = 1.4
+
+
 
                 if (j > 0):
                     
@@ -84,6 +140,23 @@ def CreateGraph(grid,rows, columns):
                     else :  
                         node.predecessors[str(i)+str(j-1)] = 1
                         node.successors[str(i)+str(j-1)] = 1
+                    
+                    if (i > 0):
+                        if (grid[i-1][j-1] == 1): 
+                            node.predecessors[str(i-1)+str(j-1)] = float('inf')
+                            node.successors[str(i-1)+str(j-1)] = float('inf')
+                        else:
+                            node.predecessors[str(i-1)+str(j-1)] = 1.4
+                            node.successors[str(i-1)+str(j-1)] = 1.4
+
+                    if (i+1< rows):
+                        if (grid[i+1][j-1] == 1): 
+                            node.predecessors[str(i+1)+str(j-1)] = float('inf')
+                            node.successors[str(i+1)+str(j-1)] = float('inf')
+                        else:
+                            node.predecessors[str(i+1)+str(j-1)] = 1.4
+                            node.successors[str(i+1)+str(j-1)] = 1.4
+
 
                 if (i+1< rows):
                     
@@ -94,6 +167,22 @@ def CreateGraph(grid,rows, columns):
                         node.predecessors[str(i+1)+str(j)] = 1
                         node.successors[str(i+1)+str(j)] = 1
 
+                    if (j > 0):
+                        if (grid[i+1][j-1] == 1):
+                            node.predecessors[str(i+1)+str(j-1)] = float('inf')
+                            node.successors[str(i+1)+str(j-1)] = float('inf')
+                        else :  
+                            node.predecessors[str(i+1)+str(j-1)] = 1.4
+                            node.successors[str(i+1)+str(j-1)] = 1.4
+                    
+                    if (j+1< columns):
+                        if (grid[i+1][j+1] == 1):
+                            node.predecessors[str(i+1)+str(j+1)] = float('inf')
+                            node.successors[str(i+1)+str(j+1)] = float('inf')
+                        else :  
+                            node.predecessors[str(i+1)+str(j+1)] = 1.4
+                            node.successors[str(i+1)+str(j+1)] = 1.4
+
                 if (j+1< columns):
                     
                     if (grid[i][j+1] == 1):
@@ -103,7 +192,24 @@ def CreateGraph(grid,rows, columns):
                         node.predecessors[str(i)+str(j+1)] = 1
                         node.successors[str(i)+str(j+1)] = 1
 
+                    if (i > 0):
+                        if (grid[i-1][j+1] == 1):
+                            node.predecessors[str(i)+str(j+1)] = float('inf')
+                            node.successors[str(i)+str(j+1)] = float('inf')
+                        else :  
+                            node.predecessors[str(i-1)+str(j+1)] = 1.4
+                            node.successors[str(i-1)+str(j+1)] = 1.4
+                    
+                    if (i+1< rows):
+                        if (grid[i+1][j+1] == 1):
+                            node.predecessors[str(i+1)+str(j+1)] = float('inf')
+                            node.successors[str(i+1)+str(j+1)] = float('inf')
+                        else :  
+                            node.predecessors[str(i+1)+str(j+1)] = 1.4
+                            node.successors[str(i+1)+str(j+1)] = 1.4
+
             Graph.graph[str(i)+str(j)] = node
+    # print (Graph)
     return Graph
 
 

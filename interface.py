@@ -21,7 +21,7 @@ y_length = 9  #same as y_length
 x_length = 9
 
 pygame.init()
-text_font = pygame.font.SysFont('Comic Sans MS', 36)
+text_font = pygame.font.SysFont('Comic Sans MS', 20)
 
 # Set the width and height of the screen [width, height]
 size = ((width + margin) * x_length + margin, (height + margin) * y_length + margin)
@@ -49,7 +49,7 @@ queue = []
 k_m = 0
 GRAPH = {}  #hadenakotama okkoma g = inf and rhs = inf wenawa
 start = "00"
-goal = "43"
+goal = "45"
 start_current_node =""
 
 
@@ -123,11 +123,12 @@ while not done:
             GRAPH.setGoal(corrected_goal)
             GRAPH.setStart(corrected_start)
             GRAPH.graph[corrected_goal].rhs = 0
-            GRAPH.getGoal()
+            # GRAPH.getGoal()
     
             heapq.heappush(queue, list(CalculateKey(GRAPH, corrected_goal, corrected_start, k_m))+[corrected_goal])
             # g,q,s,go,k_m = initialize(x_length, y_length, start, goal)
             ComputeShortestPath(GRAPH,queue,corrected_start,k_m)
+            print (GRAPH)
             # print ("done")
 
             start_current_node = corrected_start
@@ -163,7 +164,7 @@ while not done:
             # draw moving robot, based on pos_coords  for now we have used starting node but later we need to replace this with the current robot position
         robot_center = [int(int(start_current_node[1]) * (width + margin) + width / 2) +
                             margin, int(int(start_current_node[0]) * (height + margin) + height / 2) + margin]
-        pygame.draw.circle(screen, RED, robot_center, int(width / 2) - 2)
+        pygame.draw.circle(screen, RED, robot_center, int(width/2) - 2)
 
 	
     # --- Go ahead and update the screen with what we've drawn.
