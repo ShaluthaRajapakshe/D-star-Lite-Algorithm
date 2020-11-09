@@ -1,19 +1,9 @@
 from node import Node
-from graph import graph, CreateGraph
+from graph import graph, CreateGraph, getcoordinates
 import heapq
 import pygame
 import math
 import sys
-
-
-# rows = 3
-# columns =3
-# B = CreateGraph(rows, columns)
-# C = B.graph["00"].children.keys()
-# print (C)
-# B.setStart("00");
-# B.setGoal("22")
-# B.getGoal()
 
 
 #order to run the algorithm
@@ -24,8 +14,8 @@ import sys
 #Then the algorithm will call f0r computer shortest path algorithm
 
 def heuristic_from_s(node_id, start_current_node_id):  #considering diagonal distance
-    x_distance = abs(int(node_id[0]) - int(start_current_node_id[0]))
-    y_distance = abs(int(node_id[1]) - int(start_current_node_id[1]))
+    x_distance = abs(int(node_id.split('X')[1].split('Y')[0]) - int(start_current_node_id.split('X')[1].split('Y')[0]))
+    y_distance = abs(int(node_id.split('Y')[1]) - int(start_current_node_id.split('Y')[1]))
     eucledian_distance = math.sqrt(x_distance**2 + y_distance**2)
     return eucledian_distance
 
@@ -126,18 +116,6 @@ def initialize(rows, columns,start, goal):
     
     heapq.heappush(queue, list(CalculateKey(GRAPH, goal, start, k_m))+[goal])
 
-    # test = CalculateKey(GRAPH, goal, start, k_m)
-    # print (test)
-
-    # queue = [[1,2,"12"],[1,0,"24"]]
-    # # y = GetTopKey(queue)
-    # # print (y)       
-    # count = 0
-    # while (GetTopKey(queue) < CalculateKey(GRAPH, goal, start, k_m)):
-    #     count += 1
-    #     print ("hey")
-    #     if (count > 10):
-    #         break
     
     return (GRAPH, queue, start, goal, k_m)
 
@@ -173,30 +151,4 @@ def MoveToNextNode(graph, start_current_node_id):
     return next_start_node_id
     
 
-
-
-
-# g,q,s,go,k_m = initialize()
-# ComputeShortestPath(g,q,s,k_m)
-# # print (g, q, )
-# print(g)
-
-#sorting and heapq check
-
-# queue_1 = [[1,2, "11"],[0,4,"12"],[1,3,"13"],[1,1, "14"]]
-# # heapq.heapify(queue_1)
-# # heapq.heappush(queue_1,[0,1])
-
-
-# # u = heapq.heappop(queue_1)
-# # print (u)
-
-# queue_1.sort()
-# print(queue_1[0])
-
-
-
-# f,G = CalculateKey(B,"22", "00", 0)
-# print(f)
-# print(G)
 

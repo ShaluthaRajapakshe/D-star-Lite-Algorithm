@@ -27,3 +27,7 @@ class Node:
 
     def set_rhs(self, rhs_value):
         self.rhs = rhs_value
+
+
+# A = "X0Y12"
+# print (A.split("Y")[1])

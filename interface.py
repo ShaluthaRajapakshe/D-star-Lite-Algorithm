@@ -1,6 +1,6 @@
 import pygame
 from node import Node
-from graph import graph, CreateGraph
+from graph import graph, CreateGraph, getcoordinates
 from d_star_lite_algo import initialize, GetTopKey, heuristic_from_s, CalculateKey, ComputeShortestPath, UpdateVertex, NextNodeInShortestPath, MoveToNextNode
 import heapq
 
@@ -12,16 +12,16 @@ RED      = ( 255,   0,   0)
 
 
 #width and height of a cell
-width = 40
-height = 40
+width = 20
+height = 20
 margin = 1
 
 #num of cells in a row and colum
-y_length = 9  #same as y_length
-x_length = 9
+y_length = 30 #same as y_length
+x_length = 40
 
 pygame.init()
-text_font = pygame.font.SysFont('Comic Sans MS', 20)
+text_font = pygame.font.SysFont('Comic Sans MS', 10)
 
 # Set the width and height of the screen [width, height]
 size = ((width + margin) * x_length + margin, (height + margin) * y_length + margin)
@@ -41,16 +41,19 @@ initialize_grid = False
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
-
+start_node = "X0Y0"
+goal_node = "X30Y27"
 
 rows = y_length
 columns = x_length
 queue = []
 k_m = 0
 GRAPH = {}  #hadenakotama okkoma g = inf and rhs = inf wenawa
-start = "00"
-goal = "45"
-start_current_node =""
+
+
+start_current_node = start_node
+position_coordinates = getcoordinates(start_current_node)
+
 
 
 
@@ -94,6 +97,7 @@ while not done:
                 else:
                     # print('setting start_current_node to ', new_start_node)
                     start_current_node = new_start_node
+                    position_coordinates = getcoordinates(start_current_node)
 
     screen.fill(BLACK)
 
@@ -118,20 +122,22 @@ while not done:
             # print (grid)
             # print(grid[1][3])
             GRAPH = CreateGraph(grid,y_length, x_length)
-            corrected_goal = goal[1]+goal[0]
-            corrected_start = start[1]+start[0]
-            GRAPH.setGoal(corrected_goal)
-            GRAPH.setStart(corrected_start)
-            GRAPH.graph[corrected_goal].rhs = 0
+            # corrected_goal = 'X'+ str(goal[1])+'Y'+str(goal[0])
+            # corrected_start = 'X'+ str(start[1])+'Y'+str(start[0])
+            # print (corrected_goal)
+            # print (corrected_start)
+            GRAPH.setGoal(goal_node)
+            GRAPH.setStart(start_node)
+            GRAPH.graph[goal_node].rhs = 0
             # GRAPH.getGoal()
+            start_coordinates = getcoordinates(start_node)
+            goal_coordinates = getcoordinates(goal_node)
     
-            heapq.heappush(queue, list(CalculateKey(GRAPH, corrected_goal, corrected_start, k_m))+[corrected_goal])
+            heapq.heappush(queue, list(CalculateKey(GRAPH, goal_node, start_node, k_m))+[goal_node])
             # g,q,s,go,k_m = initialize(x_length, y_length, start, goal)
-            ComputeShortestPath(GRAPH,queue,corrected_start,k_m)
-            print (GRAPH)
+            ComputeShortestPath(GRAPH,queue,start_node,k_m)
+            # print (GRAPH)
             # print ("done")
-
-            start_current_node = corrected_start
 # print (g, q, )
             # print(GRAPH)
             initialize_grid = True
@@ -147,7 +153,7 @@ while not done:
                 # else:
                 #     color = WHITE
                 pygame.draw.rect(screen, color, [margin + (margin + width) * column, margin + (margin + height) * row, width, height])
-                node_id = str(row) + str(column)
+                node_id = 'X'+str(column)+'Y' + str(row)
         
                 if (GRAPH.graph[node_id].g != float('inf')):
                     text = text_font.render(str(GRAPH.graph[node_id].g), True, (0, 0, 200))
@@ -156,14 +162,15 @@ while not done:
                     textrect.centery = int(row * (height + margin) + height / 2) + margin
                     screen.blit(text, textrect)
 
-        
+    
 
-        pygame.draw.rect(screen, GREEN, [(margin + width) * int(corrected_goal[1]) + margin,
-                                            (margin + height) * int(corrected_goal[0]) + margin, width, height])
+        pygame.draw.rect(screen, GREEN, [(margin + width) * int(goal_coordinates[0]) + margin,
+                                            (margin + height) * int(goal_coordinates[1]) + margin, width, height])
             # print('drawing robot pos_coords: ', pos_coords)
             # draw moving robot, based on pos_coords  for now we have used starting node but later we need to replace this with the current robot position
-        robot_center = [int(int(start_current_node[1]) * (width + margin) + width / 2) +
-                            margin, int(int(start_current_node[0]) * (height + margin) + height / 2) + margin]
+        
+        robot_center = [int(position_coordinates[0] * (width + margin) + width / 2) +
+                            margin, int(position_coordinates[1] * (height + margin) + height / 2) + margin]
         pygame.draw.circle(screen, RED, robot_center, int(width/2) - 2)
 
 	
