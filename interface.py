@@ -9,16 +9,19 @@ BLACK    = (   0,   0,   0)
 WHITE    = ( 255, 255, 255)
 GREEN    = (   0, 255,   0)
 RED      = ( 255,   0,   0)
+GRAY = (145, 145, 102)
 
 
 #width and height of a cell
-width = 20
-height = 20
+width = 10
+height = 10
 margin = 1
 
 #num of cells in a row and colum
-y_length = 30 #same as y_length
-x_length = 40
+y_length = 40 #same as y_length
+x_length = 70
+
+Robot_scale_factor = 3
 
 pygame.init()
 text_font = pygame.font.SysFont('Comic Sans MS', 10)
@@ -41,8 +44,8 @@ initialize_grid = False
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
-start_node = "X0Y0"
-goal_node = "X30Y27"
+start_node = "X4Y4"
+goal_node = "X25Y27"
 
 rows = y_length
 columns = x_length
@@ -50,9 +53,22 @@ queue = []
 k_m = 0
 GRAPH = {}  #hadenakotama okkoma g = inf and rhs = inf wenawa
 
+obstacle_coordinates = []
+
 
 start_current_node = start_node
 position_coordinates = getcoordinates(start_current_node)
+
+#making edge grid boxes appear as obstcales, so that the robot cant go near the edges
+for i in range(Robot_scale_factor):
+    for row_zero in range(x_length):
+        grid[i][row_zero] = 1
+    for row_last in range(x_length):
+        grid[y_length - (i+1)][row_last] = 1
+    for column_zero in range(y_length):
+        grid[column_zero][i] = 1
+    for column_last in range(y_length):
+        grid[column_last][x_length - (i+1)] = 1
 
 
 
@@ -74,9 +90,28 @@ while not done:
         elif pygame.mouse.get_pressed()[0]:
             column = pos[0] // (width + margin)
             row = pos[1] // (height + margin)
+
+            obstacle_coordinates.append([row, column])
+      
             # Debug prints
             print("Click ", pos, "Grid coordinates: ", row, column)
             grid[row][column] = 1
+            #ainema thanaka awoth awulakne
+            for i in range(Robot_scale_factor):
+                grid[row][column + (i+1)] = 1
+                grid[row][column - (i+1)] = 1
+                grid[row + (i + 1)][column] = 1
+                grid[row - (i + 1)][column] = 1
+
+                grid[row + (i + 1)][column + (i+1)] = 1
+                grid[row - (i + 1)][column + (i+1)] = 1
+                grid[row + (i + 1)][column - (i+1)] = 1
+                grid[row - (i + 1)][column - (i+1)] = 1
+
+        
+                
+            
+
 
         elif pygame.mouse.get_pressed()[2]:
             column = pos[0] // (width + margin)
@@ -106,7 +141,10 @@ while not done:
         for row in range(y_length):  #3
             for column in range(x_length):  #4
                 if grid[row][column] == 1:
-                    color = BLACK
+                    color = GRAY
+                    for obstacle in obstacle_coordinates:
+                        if (row == obstacle[0] and column == obstacle[1]):
+                            color = BLACK
                 else:
                     color = WHITE
                 #pygame.draw.rect function gets x coordinate as its 3rd argument, then y coordinate
@@ -147,7 +185,10 @@ while not done:
         for row in range(y_length):
             for column in range(x_length):
                 if grid[row][column] == 1:
-                    color = BLACK
+                    color = GRAY
+                    for obstacle in obstacle_coordinates:
+                        if (row == obstacle[0] and column == obstacle[1]):
+                            color = BLACK
                 else:
                     color = WHITE
                 # else:
@@ -169,9 +210,10 @@ while not done:
             # print('drawing robot pos_coords: ', pos_coords)
             # draw moving robot, based on pos_coords  for now we have used starting node but later we need to replace this with the current robot position
         
+        
         robot_center = [int(position_coordinates[0] * (width + margin) + width / 2) +
                             margin, int(position_coordinates[1] * (height + margin) + height / 2) + margin]
-        pygame.draw.circle(screen, RED, robot_center, int(width/2) - 2)
+        pygame.draw.circle(screen, RED, robot_center, (width/2) * (2*Robot_scale_factor + 1))
 
 	
     # --- Go ahead and update the screen with what we've drawn.
